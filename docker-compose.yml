@@ -1,0 +1,28 @@
+version: "3"
+services:
+  app:
+    build: .
+    environment:
+      DB_NAME: posts
+      DB_HOST: database
+      DB_USER: posts
+      DB_PASS: password
+      DJANGO_SETTINGS_MODULE: posts.settings
+      DJANGO_SECRET_KEY: secret
+    command: ./scripts/wait-for database:5432 -- npm run watch & ./manage.py runserver 0.0.0.0:8000 
+    ports:
+    - "8000:8000"
+    volumes:
+    - .:/usr/src/app/
+    depends_on:
+    - database
+  database:
+    image: postgres
+    environment:
+      POSTGRES_USER: posts
+      POSTGRES_DB: posts
+      POSTGRES_PASSWORD: password
+    volumes:
+        - db-data:/var/lib/postgresql/data
+volumes:
+  db-data:
