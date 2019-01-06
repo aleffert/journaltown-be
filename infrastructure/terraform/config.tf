@@ -7,6 +7,9 @@ provider "google" {
     project = "${var.project_id}"
 }
 
+provider "kubernetes" {
+}
+
 # passed from outside
 variable project_id {
     type = "string"
@@ -23,5 +26,13 @@ variable app_name {
 
 # internal
 variable domain_name {
+    type = "string"
+}
+
+variable commit_sha {
+    type = "string"
+}
+
+variable image {
     type = "string"
 }
