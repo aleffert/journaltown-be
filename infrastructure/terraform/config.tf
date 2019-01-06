@@ -23,12 +23,6 @@ variable app_name {
     type = "string"
 }
 
-
-# internal
-variable domain_name {
-    type = "string"
-}
-
 variable commit_sha {
     type = "string"
 }

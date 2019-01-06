@@ -5,27 +5,36 @@ steps:
   args: [ 'push', 'gcr.io/$PROJECT_ID/${_APP_NAME}:${SHORT_SHA}']
 - name: 'gcr.io/cloud-builders/gcloud'
   args: ['container', 'clusters', 'get-credentials', '${_APP_NAME}', "--zone", "${_ZONE}", '--project', '$PROJECT_ID']
+- name:  'gcr.io/cloud-builders/gcloud'
+  args: [
+      'kms', 'decrypt',
+      '--key=${_APP_NAME}',
+      '--keyring=${_APP_NAME}',
+      '--location=global',
+      '--ciphertext-file=infrastructure/terraform/secrets-${_ENVIRONMENT}.tfvars.enc',
+      '--plaintext-file=infrastructure/terraform/secrets-${_ENVIRONMENT}.tfvars' ]
 - name: 'gcr.io/${PROJECT_ID}/terraform'
   args: ['init', 
     '-backend-config=project=${PROJECT_ID}',
     '-backend-config=prefix=${_APP_NAME}-backend',
     '-backend-config=bucket=${_BUCKET}',
-    '-var-file=infrastructure/terraform/env.tfvars',
     'infrastructure/terraform'
   ]
   env:
     - "TF_VAR_project_id=${PROJECT_ID}"
+    - "TF_VAR_environment=${_ENVIRONMENT}"
     - "TF_VAR_state_bucket=${_BUCKET}"
     - "TF_VAR_app_name=${_APP_NAME}"
     - "TF_VAR_commit_sha=${SHORT_SHA}"
     - "TF_VAR_image=gcr.io/$PROJECT_ID/${_APP_NAME}:${SHORT_SHA}"
 - name: 'gcr.io/${PROJECT_ID}/terraform'
   args: ['plan',
-    '-var-file=infrastructure/terraform/env.tfvars',
+    '-var-file=infrastructure/terraform/secrets-${_ENVIRONMENT}.tfvars',
     'infrastructure/terraform'
   ]
   env:
     - "TF_VAR_project_id=${PROJECT_ID}"
+    - "TF_VAR_environment=${_ENVIRONMENT}"
     - "TF_VAR_state_bucket=${_BUCKET}"
     - "TF_VAR_app_name=${_APP_NAME}"
     - "TF_VAR_commit_sha=${SHORT_SHA}"
@@ -33,11 +42,12 @@ steps:
 - name: 'gcr.io/${PROJECT_ID}/terraform'
   args: ['apply',
     '-auto-approve',
-    '-var-file=infrastructure/terraform/env.tfvars',
+    '-var-file=infrastructure/terraform/secrets-${_ENVIRONMENT}.tfvars',
     'infrastructure/terraform'
   ]
   env:
     - "TF_VAR_project_id=${PROJECT_ID}"
+    - "TF_VAR_environment=${_ENVIRONMENT}"
     - "TF_VAR_state_bucket=${_BUCKET}"
     - "TF_VAR_app_name=${_APP_NAME}"
     - "TF_VAR_commit_sha=${SHORT_SHA}"
