@@ -9,7 +9,7 @@ services:
       DB_PASS: password
       DJANGO_SETTINGS_MODULE: posts.settings
       DJANGO_SECRET_KEY: secret
-    command: ./scripts/wait-for database:5432 -- npm run watch & ./manage.py runserver 0.0.0.0:8000 
+    command: scripts/docker-start
     ports:
     - "8000:8000"
     volumes:

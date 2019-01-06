@@ -22,3 +22,5 @@ RUN apk add --no-cache \
   pipenv install --deploy --system
 
 COPY . .
+
+CMD ["gunicorn", "-w", "4", "posts.wsgi:application", "--bind", "0.0.0.0:8000"]

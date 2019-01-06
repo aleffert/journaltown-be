@@ -12,6 +12,7 @@ mypy = "*"
 psycopg2 = "*"
 django-webpack-loader = "*"
 djangorestframework = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.7"
