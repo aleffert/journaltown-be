@@ -51,7 +51,6 @@ steps:
     'infrastructure/terraform'
   ]
   env:
-    - "TF_LOG=DEBUG"
     - "TF_VAR_project_id=${PROJECT_ID}"
     - "TF_VAR_region=${_REGION}"
     - "TF_VAR_environment=${_ENVIRONMENT}"
