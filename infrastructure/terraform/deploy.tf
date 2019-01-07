@@ -59,7 +59,7 @@ resource "kubernetes_deployment" "app" {
           }
           env {
             name = "DB_USER"
-            value = "${var.db_user}"
+            value = "${local.db_user}"
           }
           env {
             name = "DB_PASS"
@@ -69,6 +69,14 @@ resource "kubernetes_deployment" "app" {
                 key = "db_pass"
               }
             }
+          }
+          env {
+            name = "DB_HOST"
+            value = "${var.db_host}"
+          }
+          env {
+            name = "DB_NAME"
+            value = "${var.app_name}"
           }
           env {
             name = "HOST_DOMAIN"

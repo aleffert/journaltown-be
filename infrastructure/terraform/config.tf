@@ -44,6 +44,6 @@ variable api_domain {
     type = "string"
 }
 
-variable db_user {
+variable db_host {
     type = "string"
 }
