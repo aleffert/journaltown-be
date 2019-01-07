@@ -17,6 +17,7 @@ resource "kubernetes_service" "app_service" {
 }
 
 resource "kubernetes_deployment" "app" {
+  depends_on = ["kubernetes_secret.app_secrets"]
   metadata {
     name = "${var.app_name}"
     labels {
@@ -46,6 +47,16 @@ resource "kubernetes_deployment" "app" {
         container {
           image = "${var.image}"
           name  = "${var.app_name}"
+
+          env {
+            name= "DJANGO_SECRET_KEY"
+            value_from {
+              secret_key_ref {
+                name = "${var.app_name}"
+                key = "django_secret_key"
+              }
+            }
+          }
         }
       }
     }
