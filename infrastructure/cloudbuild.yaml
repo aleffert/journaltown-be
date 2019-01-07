@@ -16,12 +16,14 @@ steps:
 - name: 'gcr.io/${PROJECT_ID}/terraform'
   args: ['init', 
     '-backend-config=project=${PROJECT_ID}',
+    '-backend-config=region=${_REGION}',
     '-backend-config=prefix=${_APP_NAME}-backend',
     '-backend-config=bucket=${_BUCKET}',
     'infrastructure/terraform'
   ]
   env:
     - "TF_VAR_project_id=${PROJECT_ID}"
+    - "TF_VAR_region=${_REGION}"
     - "TF_VAR_environment=${_ENVIRONMENT}"
     - "TF_VAR_state_bucket=${_BUCKET}"
     - "TF_VAR_app_name=${_APP_NAME}"
@@ -35,6 +37,7 @@ steps:
   ]
   env:
     - "TF_VAR_project_id=${PROJECT_ID}"
+    - "TF_VAR_region=${_REGION}"
     - "TF_VAR_environment=${_ENVIRONMENT}"
     - "TF_VAR_state_bucket=${_BUCKET}"
     - "TF_VAR_app_name=${_APP_NAME}"
@@ -48,7 +51,9 @@ steps:
     'infrastructure/terraform'
   ]
   env:
+    - "TF_LOG=DEBUG"
     - "TF_VAR_project_id=${PROJECT_ID}"
+    - "TF_VAR_region=${_REGION}"
     - "TF_VAR_environment=${_ENVIRONMENT}"
     - "TF_VAR_state_bucket=${_BUCKET}"
     - "TF_VAR_app_name=${_APP_NAME}"

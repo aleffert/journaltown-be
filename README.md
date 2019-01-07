@@ -28,7 +28,7 @@ For example, for the `staging` environment:
 ```
 gcloud kms encrypt \
   --plaintext-file=infrastructure/terraform/secrets-staging.tfvars \
-  --ciphertext-file=infrastructure/secrets-staging.tfvars.enc \
+  --ciphertext-file=infrastructure/terraform/secrets-staging.tfvars.enc \
   --location=global \
   --keyring=journaltown \
   --key=journaltown

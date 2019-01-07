@@ -15,6 +15,10 @@ variable project_id {
     type = "string"
 }
 
+variable region {
+    type = "string"
+}
+
 variable state_bucket {
     type = "string"
 }
@@ -37,5 +41,9 @@ variable environment {
 
 # from vars file
 variable api_domain {
+    type = "string"
+}
+
+variable db_user {
     type = "string"
 }

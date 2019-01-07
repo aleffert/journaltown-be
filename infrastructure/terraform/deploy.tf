@@ -58,6 +58,19 @@ resource "kubernetes_deployment" "app" {
             }
           }
           env {
+            name = "DB_USER"
+            value = "${var.db_user}"
+          }
+          env {
+            name = "DB_PASS"
+            value_from {
+              secret_key_ref {
+                name = "${var.app_name}"
+                key = "db_pass"
+              }
+            }
+          }
+          env {
             name = "HOST_DOMAIN"
             value = "${var.api_domain}"
           }
