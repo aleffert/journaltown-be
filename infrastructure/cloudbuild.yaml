@@ -30,6 +30,7 @@ steps:
 - name: 'gcr.io/${PROJECT_ID}/terraform'
   args: ['plan',
     '-var-file=infrastructure/terraform/secrets-${_ENVIRONMENT}.tfvars',
+    '-var-file=infrastructure/terraform/${_ENVIRONMENT}.tfvars',
     'infrastructure/terraform'
   ]
   env:
@@ -43,6 +44,7 @@ steps:
   args: ['apply',
     '-auto-approve',
     '-var-file=infrastructure/terraform/secrets-${_ENVIRONMENT}.tfvars',
+    '-var-file=infrastructure/terraform/${_ENVIRONMENT}.tfvars',
     'infrastructure/terraform'
   ]
   env:

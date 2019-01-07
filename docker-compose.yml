@@ -7,7 +7,7 @@ services:
       DB_HOST: database
       DB_USER: posts
       DB_PASS: password
-      DJANGO_SETTINGS_MODULE: posts.settings
+      DJANGO_SETTINGS_MODULE: posts.settings.local
       DJANGO_SECRET_KEY: secret
     command: scripts/docker-start
     ports:

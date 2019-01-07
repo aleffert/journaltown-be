@@ -30,3 +30,12 @@ variable commit_sha {
 variable image {
     type = "string"
 }
+
+variable environment {
+    type = "string"
+}
+
+# from vars file
+variable api_domain {
+    type = "string"
+}

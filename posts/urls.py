@@ -19,7 +19,7 @@ from django.http import HttpResponse
 from django.urls import path, include
 from rest_framework import routers
 
-from posts import settings
+from django.conf import settings
 from posts import views
 
 

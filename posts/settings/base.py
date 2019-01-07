@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
+from typing import List, Optional
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -25,7 +26,8 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost']
+ALLOWED_HOSTS: List[Optional[str]] = ['0.0.0.0', 'localhost']
+ALLOWED_HOSTS += [os.getenv('HOST_DOMAIN')] if os.getenv('HOST_DOMAIN') else []
 
 
 # Application definition
@@ -132,7 +134,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, "dist/")
+STATIC_ROOT = os.path.normpath(os.path.join(BASE_DIR, 'dist'))
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "dist"),
 ]

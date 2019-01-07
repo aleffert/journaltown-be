@@ -49,7 +49,7 @@ resource "kubernetes_deployment" "app" {
           name  = "${var.app_name}"
 
           env {
-            name= "DJANGO_SECRET_KEY"
+            name = "DJANGO_SECRET_KEY"
             value_from {
               secret_key_ref {
                 name = "${var.app_name}"
@@ -57,14 +57,26 @@ resource "kubernetes_deployment" "app" {
               }
             }
           }
+          env {
+            name = "HOST_DOMAIN"
+            value = "${var.api_domain}"
+          }
+          env {
+            name = "DJANGO_SETTINGS_MODULE"
+            value = "posts.settings.${var.environment}"
+          }
           liveness_probe {
-							http_get {
-								path = "/health"
-								port = 8000
-							}
-							initial_delay_seconds = 5
-							period_seconds        = 5
-						}
+              http_get {
+                path = "/health"
+                port = 8000
+                http_header {
+                  name  = "Host"
+                  value = "${var.api_domain}"
+                }
+              }
+              initial_delay_seconds = 5
+              period_seconds        = 5
+            }
         }
       }
     }
