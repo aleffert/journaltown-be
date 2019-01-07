@@ -9,7 +9,7 @@ resource "kubernetes_service" "app_service" {
     session_affinity = "ClientIP"
     port {
       port = 80
-      target_port = 80
+      target_port = 8000
     }
 
     type = "NodePort"
@@ -57,6 +57,14 @@ resource "kubernetes_deployment" "app" {
               }
             }
           }
+          liveness_probe {
+							http_get {
+								path = "/health"
+								port = 8000
+							}
+							initial_delay_seconds = 5
+							period_seconds        = 5
+						}
         }
       }
     }
