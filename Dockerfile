@@ -23,4 +23,4 @@ RUN apk add --no-cache \
 
 COPY . .
 
-CMD ["gunicorn", "-w", "4", "posts.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["scripts/docker-start"]
