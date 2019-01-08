@@ -8,6 +8,7 @@ resource "kubernetes_service" "app_service" {
     }
     session_affinity = "ClientIP"
     port {
+      name = "api"
       port = 80
       target_port = 8000
     }
