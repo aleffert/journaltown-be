@@ -5,4 +5,5 @@ set -e
 scripts/wait-for database:5432
 mkdir -p posts/dist
 python manage.py collectstatic --noinput
+python manage.py migrate
 gunicorn -w 4 posts.wsgi:application --bind 0.0.0.0:8000
