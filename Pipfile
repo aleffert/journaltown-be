@@ -15,6 +15,7 @@ djangorestframework = "*"
 gunicorn = "*"
 django-allow-cidr = "*"
 django-anymail = {extras = ["mailgun"],version = "*"}
+drfpasswordless = "*"
 
 [requires]
 python_version = "3.7"

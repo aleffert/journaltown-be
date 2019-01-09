@@ -97,6 +97,10 @@ resource "kubernetes_deployment" "app" {
             }
           }
           env {
+            name = "PASSWORDLESS_EMAIL_NOREPLY_ADDRESS"
+            value = "noreply@mail.${var.mail_domain}"
+          }
+          env {
             name = "HOST_DOMAIN"
             value = "${var.api_domain}"
           }

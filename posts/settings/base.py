@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'drfpasswordless',
     'rest_framework',
+    'rest_framework.authtoken',
     'webpack_loader',
     'posts'
 ]
@@ -112,10 +113,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication'
     ]
 }
 
@@ -143,5 +142,6 @@ STATIC_ROOT = os.path.normpath(os.path.join(BASE_DIR, 'dist'))
 PASSWORDLESS_AUTH = {
    'PASSWORDLESS_AUTH_TYPES': ['EMAIL'],
    'PASSWORDLESS_TOKEN_EXPIRE_TIME': 60 * 60,  # one hour
-   'PASSWORDLESS_REGISTER_NEW_USERS': False
+   'PASSWORDLESS_REGISTER_NEW_USERS': False,
+   'PASSWORDLESS_EMAIL_NOREPLY_ADDRESS': os.getenv('PASSWORDLESS_EMAIL_NOREPLY_ADDRESS')
 }

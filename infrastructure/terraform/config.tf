@@ -48,7 +48,10 @@ variable static_root {
     type = "string"
 }
 
-
 variable db_host {
+    type = "string"
+}
+
+variable mail_domain {
     type = "string"
 }
