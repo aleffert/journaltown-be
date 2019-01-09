@@ -26,7 +26,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS: List[Optional[str]] = ['0.0.0.0', 'localhost']
+ALLOWED_HOSTS: List[Optional[str]] = ['0.0.0.0', 'localhost', '*']
 ALLOWED_HOSTS += [os.getenv('HOST_DOMAIN')] if os.getenv('HOST_DOMAIN') else []
 
 

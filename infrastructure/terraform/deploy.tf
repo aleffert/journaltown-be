@@ -88,17 +88,17 @@ resource "kubernetes_deployment" "app" {
             value = "posts.settings.${var.environment}"
           }
           liveness_probe {
-              http_get {
-                path = "/health"
-                port = 8000
-                http_header {
-                  name  = "Host"
-                  value = "${var.api_domain}"
-                }
+            http_get {
+              path = "/health"
+              port = 8000
+              http_header {
+                name  = "Host"
+                value = "${var.api_domain}"
               }
-              initial_delay_seconds = 5
-              period_seconds        = 5
             }
+            initial_delay_seconds = 5
+            period_seconds        = 5
+          }
         }
       }
     }
