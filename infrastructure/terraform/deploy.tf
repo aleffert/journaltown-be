@@ -85,7 +85,7 @@ resource "kubernetes_deployment" "app" {
           }
           env {
             name = "MAIL_DOMAIN"
-            value = "mail.${var.mail_domain}"
+            value = "${var.mail_domain}"
           }
           env {
             name = "MAILGUN_API_KEY"
@@ -98,7 +98,7 @@ resource "kubernetes_deployment" "app" {
           }
           env {
             name = "PASSWORDLESS_EMAIL_NOREPLY_ADDRESS"
-            value = "noreply@mail.${var.mail_domain}"
+            value = "noreply@${var.mail_domain}"
           }
           env {
             name = "HOST_DOMAIN"
