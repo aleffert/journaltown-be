@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'drfpasswordless',
     'rest_framework',
     'webpack_loader',
     'posts'
@@ -138,3 +139,9 @@ USE_TZ = True
 STATIC_URL = os.getenv('STATIC_ROOT', '/static/')
 
 STATIC_ROOT = os.path.normpath(os.path.join(BASE_DIR, 'dist'))
+
+PASSWORDLESS_AUTH = {
+   'PASSWORDLESS_AUTH_TYPES': ['EMAIL'],
+   'PASSWORDLESS_TOKEN_EXPIRE_TIME': 60 * 60,  # one hour
+   'PASSWORDLESS_REGISTER_NEW_USERS': False
+}

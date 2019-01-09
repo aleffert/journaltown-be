@@ -84,6 +84,19 @@ resource "kubernetes_deployment" "app" {
             value = "${var.app_name}"
           }
           env {
+            name = "MAIL_DOMAIN"
+            value = "mail.${var.mail_domain}"
+          }
+          env {
+            name = "MAILGUN_API_KEY"
+            value_from {
+              secret_key_ref {
+                name = "${var.app_name}"
+                key = "mailgun_api_key"
+              }
+            }
+          }
+          env {
             name = "HOST_DOMAIN"
             value = "${var.api_domain}"
           }
