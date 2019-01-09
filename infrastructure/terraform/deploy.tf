@@ -49,6 +49,10 @@ resource "kubernetes_deployment" "app" {
           image = "${var.image}"
           name  = "${var.app_name}"
 
+          port {
+            container_port = 8000
+          }
+
           env {
             name = "DJANGO_SECRET_KEY"
             value_from {
@@ -88,6 +92,18 @@ resource "kubernetes_deployment" "app" {
             value = "posts.settings.${var.environment}"
           }
           liveness_probe {
+            http_get {
+              path = "/health"
+              port = 8000
+              http_header {
+                name  = "Host"
+                value = "${var.api_domain}"
+              }
+            }
+            initial_delay_seconds = 5
+            period_seconds        = 5
+          }
+          readiness_probe {
             http_get {
               path = "/health"
               port = 8000
