@@ -29,4 +29,5 @@ urlpatterns = [
     path(r'health', lambda request: HttpResponse('{}')),
     path(r'', include(router.urls)),
     path('admin/', admin.site.urls),
+    path('', include('drfpasswordless.urls')),
 ]
