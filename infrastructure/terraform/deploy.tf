@@ -1,6 +1,6 @@
 resource "kubernetes_service" "app_service" {
   metadata {
-    name = "${var.app_name}-port"
+    name = "api-service"
   }
   spec {
     selector {
@@ -8,7 +8,7 @@ resource "kubernetes_service" "app_service" {
     }
     session_affinity = "ClientIP"
     port {
-      name = "api"
+      name = "api-port"
       port = 80
       target_port = 8000
     }

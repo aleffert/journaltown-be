@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: app-ingress
+  annotations:
+    ingress.gcp.kubernetes.io/pre-shared-cert: "journaltown-api"
+spec:
+  rules:
+  - host: 'api.journaltown.com'
+    http:
+      paths:
+      - backend:
+          serviceName: api-service
+          servicePort: api-port
