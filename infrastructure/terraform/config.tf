@@ -44,6 +44,11 @@ variable api_domain {
     type = "string"
 }
 
+variable static_root {
+    type = "string"
+}
+
+
 variable db_host {
     type = "string"
 }

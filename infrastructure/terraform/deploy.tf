@@ -88,6 +88,10 @@ resource "kubernetes_deployment" "app" {
             value = "${var.api_domain}"
           }
           env {
+            name = "STATIC_ROOT"
+            value = "${var.static_root}"
+          }
+          env {
             name = "DJANGO_SETTINGS_MODULE"
             value = "posts.settings.${var.environment}"
           }

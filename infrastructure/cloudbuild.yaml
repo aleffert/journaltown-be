@@ -14,7 +14,7 @@ steps:
       '--ciphertext-file=infrastructure/terraform/secrets-${_ENVIRONMENT}.tfvars.enc',
       '--plaintext-file=infrastructure/terraform/secrets-${_ENVIRONMENT}.tfvars' ]
 - name: 'gcr.io/${PROJECT_ID}/terraform'
-  args: ['init', 
+  args: ['init',
     '-backend-config=project=${PROJECT_ID}',
     '-backend-config=region=${_REGION}',
     '-backend-config=prefix=${_APP_NAME}-backend',
@@ -63,3 +63,9 @@ steps:
     '-f',
     'infrastructure/kubernetes'
   ]
+- name: 'gcr.io/$PROJECT_ID/${_APP_NAME}:${SHORT_SHA}'
+  args: [ 'python', 'manage.py', 'collectstatic', '--noinput']
+  env:
+    - "DJANGO_SECRET_KEY=dummy"
+- name: 'gcr.io/cloud-builders/gsutil'
+  args: ['cp', '-r', 'posts/dist/*', 'gs://${_APP_NAME}-frontend/assets/']
