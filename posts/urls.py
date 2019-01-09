@@ -27,6 +27,7 @@ router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 
 urlpatterns = [
+    path(r'', lambda request: HttpResponse('{}')),
     path(r'health', lambda request: HttpResponse('{}')),
     path(r'', include(router.urls)),
     path('admin/', admin.site.urls),
