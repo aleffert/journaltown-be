@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "ab14028835a3e69e757b072fa41aee2bfd63c38e6e79e4af3a4ecbc603979c69"
+            "sha256": "d3c4a50ad69ad920addd4888bf7105a010c9594fb169c799a7a17c3a0bc56eb1"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -23,6 +23,14 @@
             ],
             "index": "pypi",
             "version": "==2.1.5"
+        },
+        "django-allow-cidr": {
+            "hashes": [
+                "sha256:d9a3b22c14e91c26ddd010c278ddf7e2c69a5421c862a3a3cd448ae57fd833e8",
+                "sha256:e8708c0511a78b80d9b74f718ee46685a1425e6d3520143bd00c773fdca56cc7"
+            ],
+            "index": "pypi",
+            "version": "==0.3.1"
         },
         "django-webpack-loader": {
             "hashes": [
@@ -78,6 +86,13 @@
             ],
             "version": "==0.4.1"
         },
+        "netaddr": {
+            "hashes": [
+                "sha256:38aeec7cdd035081d3a4c306394b19d677623bf76fa0913f6695127c7753aefd",
+                "sha256:56b3558bd71f3f6999e4c52e349f38660e54a7a8a9943335f73dfc96883e08ca"
+            ],
+            "version": "==0.7.19"
+        },
         "psycopg2": {
             "hashes": [
                 "sha256:10e391687b171878181e71736d0effe3772314a339d9ae30995ec8171a0c834e",
@@ -130,10 +145,10 @@
         },
         "pytz": {
             "hashes": [
-                "sha256:31cb35c89bd7d333cd32c5f278fca91b523b0834369e757f4c5641ea252236ca",
-                "sha256:8e0f8568c118d3077b46be7d654cc8167fa916092e28320cde048e54bfc9f1e6"
+                "sha256:32b0891edff07e28efe91284ed9c31e123d84bea3fd98e1f72be2508f43ef8d9",
+                "sha256:d5f05e487007e29e03409f9398d074e158d920d36eb82eaf66fb1136b0c5374c"
             ],
-            "version": "==2018.7"
+            "version": "==2018.9"
         },
         "typed-ast": {
             "hashes": [
