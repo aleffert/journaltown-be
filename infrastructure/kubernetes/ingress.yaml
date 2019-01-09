@@ -4,6 +4,7 @@ metadata:
   name: app-ingress
   annotations:
     ingress.gcp.kubernetes.io/pre-shared-cert: "journaltown-api"
+    kubernetes.io/ingress.allow-http: "false"
 spec:
   backend:
     serviceName: api-service
