@@ -55,3 +55,7 @@ variable db_host {
 variable mail_domain {
     type = "string"
 }
+
+variable web_origin {
+    type = "string"
+}

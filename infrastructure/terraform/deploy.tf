@@ -105,6 +105,10 @@ resource "kubernetes_deployment" "app" {
             value = "${var.api_domain}"
           }
           env {
+            name = "WEB_ORIGIN"
+            value = "${var.web_origin}"
+          }
+          env {
             name = "STATIC_ROOT"
             value = "${var.static_root}"
           }

@@ -10,6 +10,7 @@ services:
       DJANGO_SETTINGS_MODULE: posts.settings.local
       DJANGO_SECRET_KEY: secret
       PASSWORDLESS_EMAIL_NOREPLY_ADDRESS: noreply@example.com
+      WEB_ORIGIN: 'localhost:3000'
     command: scripts/docker-start
     ports:
     - "8000:8000"

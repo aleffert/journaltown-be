@@ -16,6 +16,7 @@ gunicorn = "*"
 django-allow-cidr = "*"
 django-anymail = {extras = ["mailgun"],version = "*"}
 drfpasswordless = "*"
+django-cors-headers = "*"
 
 [requires]
 python_version = "3.7"
