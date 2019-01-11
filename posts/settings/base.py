@@ -35,7 +35,7 @@ ALLOWED_CIDR_NETS = ['10.0.0.0/8']
 # Application definition
 
 CORS_ORIGIN_WHITELIST: List[Optional[str]] = []
-CORS_ORIGIN_WHITELIST += [os.getenv('WEB_ORIGIN')] if os.getenv('WEB_ORIGINI') else []
+CORS_ORIGIN_WHITELIST += [os.getenv('WEB_ORIGIN')] if os.getenv('WEB_ORIGIN') else []
 
 CORS_ALLOW_CREDENTIALS = True
 
