@@ -17,17 +17,17 @@ from django.contrib import admin
 from django.http import HttpResponse
 from django.urls import path, include
 from rest_framework import routers
-
-from posts import views
+from posts.views import users
 
 
 router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
+router.register(r'users', users.UserViewSet)
 
 urlpatterns = [
-    path(r'', lambda request: HttpResponse('{}')),
-    path(r'health', lambda request: HttpResponse('{}')),
-    path(r'', include(router.urls)),
+    path('', lambda request: HttpResponse('{}')),
+    path('health', lambda request: HttpResponse('{}')),
+    path('', include(router.urls)),
     path('admin/', admin.site.urls),
     path('', include('drfpasswordless.urls')),
+    path('me/', users.CurrentUserView.as_view())
 ]

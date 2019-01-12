@@ -121,7 +121,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication'
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated'
     ]
 }
 
@@ -150,5 +154,11 @@ PASSWORDLESS_AUTH = {
    'PASSWORDLESS_AUTH_TYPES': ['EMAIL'],
    'PASSWORDLESS_TOKEN_EXPIRE_TIME': 60 * 60,  # one hour
    'PASSWORDLESS_REGISTER_NEW_USERS': False,
-   'PASSWORDLESS_EMAIL_NOREPLY_ADDRESS': os.getenv('PASSWORDLESS_EMAIL_NOREPLY_ADDRESS')
+   'PASSWORDLESS_EMAIL_NOREPLY_ADDRESS': os.getenv('PASSWORDLESS_EMAIL_NOREPLY_ADDRESS'),
+   'PASSWORDLESS_EMAIL_TOKEN_HTML_TEMPLATE_NAME': 'login_email.html',
+   'PASSWORDLESS_CONTEXT_PROCESSORS': [
+       'posts.email.login.link_context'
+   ]
 }
+
+IS_HTTPS = True
