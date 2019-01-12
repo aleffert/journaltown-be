@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -12,6 +13,7 @@ class CurrentUserView(generics.GenericAPIView):
     Lists information related to the current user.
     """
     serializer_class = serializers.CurrentUserSerializer
+    permission_classes = (IsAuthenticated, )
 
     def get(self, request: Request, *args, **kwargs):
         serializer = self.get_serializer(request.user)
