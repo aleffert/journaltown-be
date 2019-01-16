@@ -6,6 +6,7 @@ from posts.tests.utils import AuthTestCase
 class CurrentUserViewTest(AuthTestCase):
 
     def setUp(self):
+        super().setUp()
         self.user = get_user_model().objects.create_user(username='me', email='me@example.com')
 
     def test_not_logged_in_returns_unauthorized(self):
