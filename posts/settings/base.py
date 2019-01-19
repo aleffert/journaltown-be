@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'drfpasswordless',
     'rest_framework',
     'rest_framework.authtoken',
-    'webpack_loader',
+    'django_filters',
     'posts'
 ]
 
@@ -64,6 +64,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allow_cidr.middleware.AllowCIDRMiddleware',
+    'posts.middleware.JsonExceptionMiddleware'
 ]
 
 ROOT_URLCONF = 'posts.urls'

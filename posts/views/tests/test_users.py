@@ -17,4 +17,4 @@ class CurrentUserViewTest(AuthTestCase):
         self.client.force_login(self.user)
         response = self.client.get('/me/')
         self.assertEqual(200, response.status_code)
-        self.assertEqual({'username': 'me', 'email': 'me@example.com'}, response.json())
+        self.assertEqual({'username': 'me', 'id': self.user.id, 'email': 'me@example.com'}, response.json())

@@ -8,20 +8,18 @@ class CurrentUserSerializer(serializers.HyperlinkedModelSerializer):
         email = serializers.EmailField()
 
         model = User
-        fields = ('username', 'email')
+        fields = ('id', 'username', 'email')
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ('username', )
+        fields = ('id', 'username')
 
 
 class PostSerializer(serializers.HyperlinkedModelSerializer):
 
-    author = serializers.PrimaryKeyRelatedField(read_only=True)
-    created_at = serializers.DateTimeField(read_only=True)
-    last_modified = serializers.DateTimeField(read_only=True)
+    author = UserSerializer(read_only=True)
 
     class Meta:
         model = Post
