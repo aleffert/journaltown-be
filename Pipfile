@@ -18,6 +18,7 @@ django-anymail = {extras = ["mailgun"],version = "*"}
 drfpasswordless = "*"
 django-cors-headers = "*"
 django-filter = "*"
+django-extensions = "*"
 
 [requires]
 python_version = "3.7"

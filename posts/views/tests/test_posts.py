@@ -124,3 +124,11 @@ class CurrentUserViewTest(AuthTestCase):
         self.assertEqual(200, response.status_code)
         self.assertEqual(len(body), 1)
         self.assertEqual(new_post.pk, body[0]['id'])
+
+    def test_posts_get_individual_post(self):
+        """Can we get an individual post"""
+        self.client.force_login(self.user)
+        post = Post.objects.create(title='title', body='body', author=self.user)
+        response = self.client.get(f'/posts/{post.id}/')
+
+        self.assertEqual(200, response.status_code)

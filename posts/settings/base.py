@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'drfpasswordless',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_extensions',
     'django_filters',
     'posts'
 ]
