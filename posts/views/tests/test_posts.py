@@ -125,10 +125,19 @@ class CurrentUserViewTest(AuthTestCase):
         self.assertEqual(len(body), 1)
         self.assertEqual(new_post.pk, body[0]['id'])
 
-    def test_posts_get_individual_post(self):
-        """Can we get an individual post"""
+    def test_get_individual_post(self):
+        """Can we get a single post by id"""
         self.client.force_login(self.user)
         post = Post.objects.create(title='title', body='body', author=self.user)
         response = self.client.get(f'/posts/{post.id}/')
 
         self.assertEqual(200, response.status_code)
+
+    def test_delete_post(self):
+        """Can we delete a post"""
+        self.client.force_login(self.user)
+        post = Post.objects.create(title='title', body='body', author=self.user)
+
+        response = self.client.delete(f'/posts/{post.id}/')
+        self.assertEqual(204, response.status_code)
+        self.assertEqual(response.content, b'')
