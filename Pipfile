@@ -19,6 +19,8 @@ drfpasswordless = "*"
 django-cors-headers = "*"
 django-filter = "*"
 django-extensions = "*"
+validate-email = "*"
+django-registration = "*"
 
 [requires]
 python_version = "3.7"

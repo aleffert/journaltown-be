@@ -5,7 +5,7 @@ from posts.tests.utils import AuthTestCase
 from posts.models import Post
 
 
-class CurrentUserViewTest(AuthTestCase):
+class PostUserViewTest(AuthTestCase):
 
     def setUp(self):
         super().setUp()
