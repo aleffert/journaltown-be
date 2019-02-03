@@ -21,6 +21,8 @@ django-filter = "*"
 django-extensions = "*"
 validate-email = "*"
 django-registration = "*"
+djangorestframework-expander = "*"
+drf-writable-nested = "*"
 
 [requires]
 python_version = "3.7"

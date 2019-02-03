@@ -1,26 +1,44 @@
 from django.contrib.auth.models import User
-from posts.models import Post
+from drf_writable_nested import WritableNestedModelSerializer
+from expander import ExpanderSerializerMixin
 from rest_framework import serializers
 
+from posts.models import Post, UserProfile
 
-class CurrentUserSerializer(serializers.HyperlinkedModelSerializer):
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['bio']
+
+
+class CurrentUserSerializer(serializers.ModelSerializer):
+
+    profile = UserProfileSerializer(read_only=True)
+
     class Meta:
         email = serializers.EmailField()
 
         model = User
-        fields = ('id', 'username', 'email')
+        fields = ['id', 'username', 'email', 'profile']
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(ExpanderSerializerMixin, WritableNestedModelSerializer):
+
+    username = serializers.CharField(required=False)
+
     class Meta:
         model = User
-        fields = ('id', 'username')
+        fields = ['id', 'username']
+        expandable_fields = {
+            'profile': UserProfileSerializer
+        }
 
 
-class PostSerializer(serializers.HyperlinkedModelSerializer):
+class PostSerializer(serializers.ModelSerializer):
 
     author = UserSerializer(read_only=True)
 
     class Meta:
         model = Post
-        fields = ('id', 'author', 'created_at', 'title', 'body', 'last_modified')
+        fields = ['id', 'author', 'created_at', 'title', 'body', 'last_modified']
