@@ -37,3 +37,9 @@ class EmailInUseError(ResponseError):
 
     def __init__(self):
         super().__init__('email-in-use', ['There is an already an account with that email address'])
+
+
+class InvalidUsernameError(ResponseError):
+
+    def __init__(self, name: str):
+        super().__init__('unknown-username', [f"There is no user named '{name}'"])

@@ -22,8 +22,6 @@ class UserProfile(models.Model):
 
     bio = models.CharField(max_length=1024 * 10, blank=True, null=True)
 
-    friend_prompt = models.CharField(max_length=1024, blank=True, null=True)
-
     def __str__(self):
         return f"{self.user.username}'s profile"
 
@@ -72,3 +70,27 @@ class EmailVerificationToken(models.Model):
         auto_now_add=True,
         null=False
     )
+
+
+class Follow(models.Model):
+    follower = models.ForeignKey(
+        User,
+        null=False, db_index=True, on_delete=models.CASCADE,
+        related_name='followed_by_set'
+    )
+
+    followee = models.ForeignKey(
+        User, null=False, db_index=True, on_delete=models.CASCADE,
+        related_name='following_set'
+    )
+
+    last_modified = models.DateTimeField(
+        auto_now=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return f"{self.follower.username} follows {self.followee.username}"

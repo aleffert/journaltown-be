@@ -1,10 +1,13 @@
 from django.contrib.auth import get_user_model
+from rest_framework import views
 from rest_framework import viewsets
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from posts import errors
+from posts import models
 from posts import serializers
 
 
@@ -28,3 +31,50 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = get_user_model().objects.all()
     serializer_class = serializers.UserSerializer
     lookup_field = 'username'
+
+
+class FollowView(views.APIView):
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request: Request, username: str, *args, **kwargs):
+        user = get_user_model().objects.filter(username=username).first()
+        if not user:
+            return Response(errors.InvalidUsernameError(username).render(), 404)
+        return Response([serializers.UserSerializer(follow.follower).data for follow in user.following_set.all()])
+
+    def put(self, request: Request, username: str, *args, **kwargs):
+        source_user = get_user_model().objects.filter(username=username).first()
+        if not source_user:
+            return Response(errors.InvalidUsernameError(username).render(), 404)
+
+        target_username = request.data.get('username', None)
+        if not target_username:
+            return Response(errors.MissingFieldsError(['username']).render(), 400)
+
+        target_user = get_user_model().objects.filter(username=target_username).first()
+        if not target_user:
+            return Response(errors.InvalidUsernameError(username).render(), 404)
+
+        follow = models.Follow.objects.filter(follower=source_user, followee=target_user).first()
+        if not follow:
+            models.Follow.objects.create(follower=source_user, followee=target_user)
+
+        return Response('', status=204)
+
+    def delete(self, request: Request, username: str, *args, **kwargs):
+        source_user = get_user_model().objects.filter(username=username).first()
+        if not source_user:
+            return Response(errors.InvalidUsernameError(username).render(), 404)
+
+        target_username = request.data.get('username', None)
+        if not target_username:
+            return Response(errors.MissingFieldsError(['username']).render(), 400)
+
+        target_user = get_user_model().objects.filter(username=target_username).first()
+        if not target_user:
+            return Response(errors.InvalidUsernameError(username).render(), 404)
+
+        follows = models.Follow.objects.filter(follower=source_user, followee=target_user)
+        follows.delete()
+
+        return Response('', status=204)

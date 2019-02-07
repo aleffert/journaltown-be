@@ -25,13 +25,14 @@ router.register(r'users', users.UserViewSet)
 router.register(r'posts', posts.PostViewSet)
 
 urlpatterns = [
-    path('', lambda request: HttpResponse('{}')),
-    path('health', lambda request: HttpResponse('{}')),
+    path('', lambda request: HttpResponse('')),
+    path('health', lambda request: HttpResponse('')),
     path('', include(router.urls)),
     path('admin/', admin.site.urls),
     path('', include('drfpasswordless.urls')),
     path('me/', users.CurrentUserView.as_view()),
     path('register/email/', registration.send_token_email),
     path('callback/register/', registration.register_email_callback),
-    path('users/<username>/available/', registration.is_available)
+    path('users/<username>/available/', registration.is_available),
+    path('users/<username>/follows/', users.FollowView.as_view())
 ]

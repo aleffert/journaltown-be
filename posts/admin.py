@@ -10,3 +10,8 @@ class PostAdmin(admin.ModelAdmin):
 @admin.register(models.UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
     pass
+
+
+@admin.register(models.Follow)
+class FollowAdmin(admin.ModelAdmin):
+    pass

@@ -18,7 +18,7 @@ class PostFilters(django_filters.rest_framework.FilterSet):
 
 class PostViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows users to be viewed or edited.
+    API endpoint that allows posts to be viewed or edited.
     """
     permission_classes = (IsAuthenticated, )
     queryset = Post.objects.all()
