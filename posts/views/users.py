@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from rest_framework import views
 from rest_framework import viewsets
 from rest_framework import generics
-from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response

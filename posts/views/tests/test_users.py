@@ -132,7 +132,6 @@ class FollowViewTestCase(AuthTestCase):
         )
 
         self.assertEqual(403, response.status_code)
-        body = response.json()
 
     def test_put_invalid_target_username_fails(self):
         """Requesting to follow an invalid username fails"""
