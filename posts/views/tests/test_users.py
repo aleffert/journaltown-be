@@ -10,6 +10,7 @@ class CurrentUserViewTest(AuthTestCase):
     def setUp(self):
         super().setUp()
         self.user = get_user_model().objects.create_user(username='me', email='me@example.com')
+        self.other = get_user_model().objects.create_user(username='other', email='other@example.com')
 
     def test_not_logged_in_returns_unauthorized(self):
         response = self.client.get('/me/')
@@ -53,6 +54,17 @@ class CurrentUserViewTest(AuthTestCase):
         self.assertEqual(200, response.status_code)
         self.assertEqual(body['profile']['bio'], 'abc123')
         self.assertEqual(body['username'], self.user.username)
+
+    def test_update_other_profile_fails(self):
+        """We should not be able to update a user's profile"""
+        self.client.force_login(self.other)
+
+        data = json.dumps({"profile": {"bio": "abc123"}})
+        response = self.client.put(
+            f'/users/{self.user.username}/?expand=profile', data=data, content_type="application/json"
+        )
+
+        self.assertEqual(403, response.status_code)
 
 
 class FollowViewTestCase(AuthTestCase):
@@ -98,6 +110,17 @@ class FollowViewTestCase(AuthTestCase):
         follow = Follow.objects.filter(follower=self.user, followee=self.other).first()
         self.assertIsNotNone(follow)
 
+    def test_put_cannot_add_follow_for_other_user(self):
+        """It is not possible to force a follow for another user"""
+        self.client.force_login(self.user)
+
+        response = self.client.put(
+            f'/users/{self.other.username}/follows/',
+            data=json.dumps({'username': self.user.username}),
+            content_type='application/json'
+        )
+        self.assertEqual(403, response.status_code)
+
     def test_put_invalid_username_fails(self):
         """Requesting an invalid username path fails"""
         self.client.force_login(self.user)
@@ -108,10 +131,8 @@ class FollowViewTestCase(AuthTestCase):
             content_type='application/json'
         )
 
-        self.assertEqual(404, response.status_code)
+        self.assertEqual(403, response.status_code)
         body = response.json()
-        self.assertEqual(body['status'], 'error')
-        self.assertEqual(body['type'], 'unknown-username')
 
     def test_put_invalid_target_username_fails(self):
         """Requesting to follow an invalid username fails"""
@@ -124,9 +145,6 @@ class FollowViewTestCase(AuthTestCase):
         )
 
         self.assertEqual(404, response.status_code)
-        body = response.json()
-        self.assertEqual(body['status'], 'error')
-        self.assertEqual(body['type'], 'unknown-username')
 
     def test_put_missing_target_username_fails(self):
         """Requesting to follow without a username fails"""
@@ -185,10 +203,7 @@ class FollowViewTestCase(AuthTestCase):
             content_type='application/json'
         )
 
-        self.assertEqual(404, response.status_code)
-        body = response.json()
-        self.assertEqual(body['status'], 'error')
-        self.assertEqual(body['type'], 'unknown-username')
+        self.assertEqual(403, response.status_code)
 
     def test_delete_invalid_target_username_fails(self):
         """Requesting to delete an invalid username fails"""
