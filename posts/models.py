@@ -76,12 +76,12 @@ class Follow(models.Model):
     follower = models.ForeignKey(
         User,
         null=False, db_index=True, on_delete=models.CASCADE,
-        related_name='followed_by_set'
+        related_name='following'
     )
 
     followee = models.ForeignKey(
         User, null=False, db_index=True, on_delete=models.CASCADE,
-        related_name='following_set'
+        related_name='followers'
     )
 
     last_modified = models.DateTimeField(

@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from posts import filters
 from posts import errors
 from posts import models
 from posts import permissions
@@ -42,7 +43,9 @@ class FollowView(views.APIView):
         if not user:
             return Response(errors.InvalidUsernameError(username).render(), 404)
         self.check_object_permissions(self.request, user)
-        return Response([serializers.UserSerializer(follow.follower).data for follow in user.following_set.all()])
+
+        followers = filters.FollowersFilterSet(request.GET, queryset=user.followers).qs
+        return Response([serializers.UserSerializer(follow.follower).data for follow in followers])
 
     def put(self, request: Request, username: str, *args, **kwargs):
         source_user = get_user_model().objects.filter(username=username).first()
@@ -62,7 +65,7 @@ class FollowView(views.APIView):
         if not follow:
             models.Follow.objects.create(follower=source_user, followee=target_user)
 
-        return Response('', status=204)
+        return Response([serializers.RelatedUserSerializer(target_user).data], status=200)
 
     def delete(self, request: Request, username: str, *args, **kwargs):
         source_user = get_user_model().objects.filter(username=username).first()
@@ -81,4 +84,4 @@ class FollowView(views.APIView):
         follows = models.Follow.objects.filter(follower=source_user, followee=target_user)
         follows.delete()
 
-        return Response('', status=204)
+        return Response('[]', status=200)

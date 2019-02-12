@@ -41,6 +41,15 @@ class CurrentUserViewTest(AuthTestCase):
         body = response.json()
         self.assertEqual(body['profile']['bio'], self.user.profile.bio)
 
+    def test_get_user_includes_follows(self):
+        self.client.force_login(self.user)
+        Follow.objects.create(follower=self.user, followee=self.other)
+        Follow.objects.create(follower=self.user, followee=self.user)
+        response = self.client.get(f'/users/{self.user.username}/', {'expand': 'followers,following'})
+        body = response.json()
+        self.assertEqual(body['following'], [{'username': 'other'}, {'username': 'me'}])
+        self.assertEqual(body['followers'], [{'username': 'me'}])
+
     def test_update_profile(self):
         """We should just be able to update a user's profile"""
         self.client.force_login(self.user)
@@ -85,8 +94,37 @@ class FollowViewTestCase(AuthTestCase):
         self.assertEqual(len(body), 1)
         self.assertEqual(body[0]['id'], self.other.id)
 
+    def test_get_returns_individual_follow(self):
+        """Can filter to an individual follow"""
+        self.client.force_login(self.user)
+        third_user = get_user_model().objects.create_user(username='hii', email='hii@example.com')
+
+        Follow.objects.create(follower=self.other, followee=self.user)
+        Follow.objects.create(follower=third_user, followee=self.user)
+
+        response = self.client.get(f'/users/{self.user.username}/follows/?username={self.other.username}')
+        self.assertEqual(200, response.status_code)
+        body = response.json()
+        self.assertEqual(len(body), 1)
+        self.assertEqual(body[0]['id'], self.other.id)
+
+    def test_get_returns_filtered_follow_list(self):
+        """Can filter to a list of follows"""
+        self.client.force_login(self.user)
+        third_user = get_user_model().objects.create_user(username='hii', email='hii@example.com')
+
+        Follow.objects.create(follower=self.other, followee=self.user)
+        Follow.objects.create(follower=third_user, followee=self.user)
+
+        response = self.client.get(
+            f'/users/{self.user.username}/follows/?username__in={self.other.username},{third_user.username}'
+        )
+        self.assertEqual(200, response.status_code)
+        body = response.json()
+        self.assertEqual(len(body), 2)
+
     def test_get_invalid_username_fails(self):
-        """All follows are returned"""
+        """Getting an invalid username fails"""
         self.client.force_login(self.user)
         Follow.objects.create(follower=self.other, followee=self.user)
 
