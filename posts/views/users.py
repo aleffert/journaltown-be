@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model
+from rest_framework import generics
+from rest_framework import mixins
 from rest_framework import views
 from rest_framework import viewsets
-from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -11,6 +12,7 @@ from posts import errors
 from posts import models
 from posts import permissions
 from posts import serializers
+from posts import tasks
 
 
 class CurrentUserView(generics.GenericAPIView):
@@ -25,7 +27,12 @@ class CurrentUserView(generics.GenericAPIView):
         return Response(serializer.data)
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(
+    mixins.UpdateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet
+):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -63,7 +70,8 @@ class FollowView(views.APIView):
 
         follow = models.Follow.objects.filter(follower=source_user, followee=target_user).first()
         if not follow:
-            models.Follow.objects.create(follower=source_user, followee=target_user)
+            follow = models.Follow.objects.create(follower=source_user, followee=target_user)
+            tasks.send_follow_email(follow, self.request.user)
 
         return Response([serializers.RelatedUserSerializer(target_user).data], status=200)
 
@@ -84,4 +92,4 @@ class FollowView(views.APIView):
         follows = models.Follow.objects.filter(follower=source_user, followee=target_user)
         follows.delete()
 
-        return Response('[]', status=200)
+        return Response('', status=204)

@@ -1,5 +1,7 @@
+import logging
 import json
 from django.contrib.auth import get_user_model
+from django.core import mail
 
 from posts.tests.utils import AuthTestCase
 from posts.models import Follow
@@ -64,6 +66,17 @@ class CurrentUserViewTest(AuthTestCase):
         self.assertEqual(body['profile']['bio'], 'abc123')
         self.assertEqual(body['username'], self.user.username)
 
+    def test_cannot_update_external_profile(self):
+        """We should not be able to update another user's profile"""
+        self.client.force_login(self.user)
+
+        data = json.dumps({"profile": {"bio": "abc123"}})
+        response = self.client.put(
+            f'/users/{self.other.username}/?expand=profile', data=data, content_type="application/json"
+        )
+
+        self.assertEqual(403, response.status_code)
+
     def test_update_other_profile_fails(self):
         """We should not be able to update a user's profile"""
         self.client.force_login(self.other)
@@ -82,6 +95,12 @@ class FollowViewTestCase(AuthTestCase):
         super().setUp()
         self.user = get_user_model().objects.create_user(username='me', email='me@example.com')
         self.other = get_user_model().objects.create_user(username='other', email='other@example.com')
+
+    def test_cannot_delete_account(self):
+        """A user should not be able to delete their account"""
+        self.client.force_login(self.user)
+        response = self.client.delete(f'/users/{self.user.username}/')
+        self.assertEqual(405, response.status_code)
 
     def test_get_returns_follow_list(self):
         """All follows are returned"""
@@ -143,7 +162,7 @@ class FollowViewTestCase(AuthTestCase):
             data=json.dumps({'username': self.other.username}),
             content_type='application/json'
         )
-        self.assertEqual(204, response.status_code)
+        self.assertEqual(200, response.status_code)
 
         follow = Follow.objects.filter(follower=self.user, followee=self.other).first()
         self.assertIsNotNone(follow)
@@ -211,7 +230,7 @@ class FollowViewTestCase(AuthTestCase):
             data=json.dumps({'username': self.other.username}),
             content_type='application/json'
         )
-        self.assertEqual(204, response.status_code)
+        self.assertEqual(200, response.status_code)
         count = Follow.objects.filter(follower=self.user, followee=self.other).count()
         self.assertEqual(1, count)
 
@@ -290,3 +309,17 @@ class FollowViewTestCase(AuthTestCase):
         self.assertEqual(204, response.status_code)
         count = Follow.objects.filter(follower=self.user, followee=self.other).count()
         self.assertEqual(0, count)
+
+    def test_first_add_sends_target_email(self):
+        self.client.force_login(self.user)
+        response = self.client.put(
+            f'/users/{self.user.username}/follows/',
+            data=json.dumps({'username': self.other.username}),
+            content_type='application/json'
+        )
+
+        self.assertEqual(200, response.status_code)
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn(self.user.username, str(mail.outbox[0].message().get_payload(0)))
+        self.assertIn(self.user.username, str(mail.outbox[0].message().get_payload(1)))
