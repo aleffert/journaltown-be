@@ -94,3 +94,37 @@ class Follow(models.Model):
 
     def __str__(self):
         return f"{self.follower.username} follows {self.followee.username}"
+
+
+class FriendGroup(models.Model):
+    name = models.CharField(max_length=48, blank=False, null=False)
+
+    owner = models.ForeignKey(
+        User, null=False, db_index=True, on_delete=models.CASCADE
+    )
+
+    last_modified = models.DateTimeField(
+        auto_now=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+
+class FriendGroupMember(models.Model):
+    member = models.ForeignKey(
+        User, null=False, db_index=True, on_delete=models.CASCADE
+    )
+
+    group = models.ForeignKey(
+        FriendGroup, null=False, db_index=True, on_delete=models.CASCADE
+    )
+
+    last_modified = models.DateTimeField(
+        auto_now=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )

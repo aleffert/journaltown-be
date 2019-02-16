@@ -1,4 +1,3 @@
-import logging
 import json
 from django.contrib.auth import get_user_model
 from django.core import mail
@@ -188,7 +187,7 @@ class FollowViewTestCase(AuthTestCase):
             content_type='application/json'
         )
 
-        self.assertEqual(403, response.status_code)
+        self.assertEqual(404, response.status_code)
 
     def test_put_invalid_target_username_fails(self):
         """Requesting to follow an invalid username fails"""
@@ -259,7 +258,7 @@ class FollowViewTestCase(AuthTestCase):
             content_type='application/json'
         )
 
-        self.assertEqual(403, response.status_code)
+        self.assertEqual(404, response.status_code)
 
     def test_delete_invalid_target_username_fails(self):
         """Requesting to delete an invalid username fails"""

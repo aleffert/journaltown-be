@@ -3,7 +3,7 @@ from drf_writable_nested import WritableNestedModelSerializer
 from expander import ExpanderSerializerMixin
 from rest_framework import serializers
 
-from posts.models import Post, UserProfile, Follow
+from posts.models import FriendGroup, Post, UserProfile, Follow
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -22,11 +22,13 @@ class CurrentUserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'email', 'profile']
 
+
 class RelatedUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
         fields = ['username']
+
 
 class FollowerUserSerializer(serializers.ModelSerializer):
 
@@ -67,3 +69,17 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ['id', 'author', 'created_at', 'title', 'body', 'last_modified']
+
+
+class FriendGroupSerializer(serializers.ModelSerializer):
+
+    owner = RelatedUserSerializer(read_only=True)
+    name = serializers.CharField(required=True)
+
+    class Meta:
+        model = FriendGroup
+        fields = ['id', 'owner', 'name']
+
+        expandable_fields = {
+            'members': (RelatedUserSerializer, (), {'many: True'})
+        }

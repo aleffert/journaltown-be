@@ -65,7 +65,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allow_cidr.middleware.AllowCIDRMiddleware',
-    'posts.middleware.JsonExceptionMiddleware'
+    'posts.middleware.JsonExceptionMiddleware',
+    'posts.middleware.ResponseExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'posts.urls'

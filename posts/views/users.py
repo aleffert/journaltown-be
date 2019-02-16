@@ -1,18 +1,17 @@
 from django.contrib.auth import get_user_model
 from rest_framework import generics
 from rest_framework import mixins
-from rest_framework import views
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
 from posts import filters
-from posts import errors
 from posts import models
 from posts import permissions
 from posts import serializers
 from posts import tasks
+from posts.views.mixins import UsernameScopedMixin
 
 
 class CurrentUserView(generics.GenericAPIView):
@@ -42,31 +41,20 @@ class UserViewSet(
     lookup_field = 'username'
 
 
-class FollowView(views.APIView):
+class FollowView(generics.GenericAPIView, UsernameScopedMixin):
     permission_classes = (IsAuthenticated, permissions.IsUserOrReadOnly)
 
     def get(self, request: Request, username: str, *args, **kwargs):
-        user = get_user_model().objects.filter(username=username).first()
-        if not user:
-            return Response(errors.InvalidUsernameError(username).render(), 404)
-        self.check_object_permissions(self.request, user)
+        user = self.get_user_or_404(username)
 
         followers = filters.FollowersFilterSet(request.GET, queryset=user.followers).qs
         return Response([serializers.UserSerializer(follow.follower).data for follow in followers])
 
     def put(self, request: Request, username: str, *args, **kwargs):
-        source_user = get_user_model().objects.filter(username=username).first()
-        self.check_object_permissions(self.request, source_user)
-        if not source_user:
-            return Response(errors.InvalidUsernameError(username).render(), 404)
+        source_user = self.get_user_or_404(username)
 
         target_username = request.data.get('username', None)
-        if not target_username:
-            return Response(errors.MissingFieldsError(['username']).render(), 400)
-
-        target_user = get_user_model().objects.filter(username=target_username).first()
-        if not target_user:
-            return Response(errors.InvalidUsernameError(username).render(), 404)
+        target_user = self.get_user_or_404(target_username, check=False)
 
         follow = models.Follow.objects.filter(follower=source_user, followee=target_user).first()
         if not follow:
@@ -76,18 +64,10 @@ class FollowView(views.APIView):
         return Response([serializers.RelatedUserSerializer(target_user).data], status=200)
 
     def delete(self, request: Request, username: str, *args, **kwargs):
-        source_user = get_user_model().objects.filter(username=username).first()
-        self.check_object_permissions(self.request, source_user)
-        if not source_user:
-            return Response(errors.InvalidUsernameError(username).render(), 404)
+        source_user = self.get_user_or_404(username)
 
         target_username = request.data.get('username', None)
-        if not target_username:
-            return Response(errors.MissingFieldsError(['username']).render(), 400)
-
-        target_user = get_user_model().objects.filter(username=target_username).first()
-        if not target_user:
-            return Response(errors.InvalidUsernameError(username).render(), 404)
+        target_user = self.get_user_or_404(target_username, check=False)
 
         follows = models.Follow.objects.filter(follower=source_user, followee=target_user)
         follows.delete()
