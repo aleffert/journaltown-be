@@ -1,5 +1,13 @@
 from typing import List
 
+from rest_framework.response import Response
+
+
+class OfResponse(Exception):
+
+    def __init__(self, response: Response):
+        self.response = response
+
 
 class ResponseError:
 

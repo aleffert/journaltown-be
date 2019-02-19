@@ -9,5 +9,10 @@ class IsUserOrReadOnly(BasePermission):
         if request.method in SAFE_METHODS:
             return True
 
-        # Instance must have an attribute named `owner`.
+        return obj == request.user
+
+
+class IsUser(BasePermission):
+
+    def has_object_permission(self, request, view, obj):
         return obj == request.user

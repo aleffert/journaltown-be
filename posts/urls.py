@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.http import HttpResponse
 from django.urls import path, include
 from rest_framework import routers
-from posts.views import posts, users, registration
+from posts.views import posts, users, registration, groups
 
 
 router = routers.DefaultRouter()
@@ -34,5 +34,7 @@ urlpatterns = [
     path('register/email/', registration.send_token_email),
     path('callback/register/', registration.register_email_callback),
     path('users/<username>/available/', registration.is_available),
-    path('users/<username>/follows/', users.FollowView.as_view())
+    path('users/<username>/follows/', users.FollowView.as_view()),
+    path('users/<username>/groups/', groups.FriendGroupView.as_view()),
+    path('users/<username>/groups/<int:group_id>/members/', groups.FriendGroupMemberView.as_view())
 ]
