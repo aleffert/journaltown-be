@@ -3,15 +3,14 @@ from django.contrib.auth import get_user_model
 from django.core import mail
 
 from posts.tests.utils import AuthTestCase
-from posts.models import Follow
+from posts.models import Follow, FriendGroup
 
 
-class CurrentUserViewTest(AuthTestCase):
+class CurrentUserViewTestCase(AuthTestCase):
 
     def setUp(self):
         super().setUp()
         self.user = get_user_model().objects.create_user(username='me', email='me@example.com')
-        self.other = get_user_model().objects.create_user(username='other', email='other@example.com')
 
     def test_not_logged_in_returns_unauthorized(self):
         response = self.client.get('/me/')
@@ -19,11 +18,29 @@ class CurrentUserViewTest(AuthTestCase):
 
     def test_logged_in_returns_user_info(self):
         self.client.force_login(self.user)
+
+        group = FriendGroup.objects.create(name='some group', owner=self.user)
+
         response = self.client.get('/me/')
+        body = response.json()
+
         self.assertEqual(200, response.status_code)
         self.assertEqual({'username': 'me', 'id': self.user.id, 'email': 'me@example.com', 'profile': {
             'bio': None
-        }}, response.json())
+        }, 'groups': [
+            {
+                'name': group.name,
+                'id': group.pk
+            }
+        ]}, body)
+
+
+class UserViewTestCase(AuthTestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.user = get_user_model().objects.create_user(username='me', email='me@example.com')
+        self.other = get_user_model().objects.create_user(username='other', email='other@example.com')
 
     def test_get_individual_user(self):
         """We should be able to fetch a user info by username"""

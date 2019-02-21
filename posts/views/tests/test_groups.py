@@ -23,7 +23,6 @@ class FriendGroupViewTest(AuthTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(body), 1)
-        self.assertEqual(body[0]['owner'], {'username': 'me'})
         self.assertEqual(body[0]['name'], 'Some Group')
 
     def test_cannot_get_other_user_friend_groups(self):
@@ -47,7 +46,6 @@ class FriendGroupViewTest(AuthTestCase):
 
         body = response.json()
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(body['owner'], {'username': 'me'})
         self.assertEqual(body['name'], 'Some Group')
 
     def test_can_change_group_name(self):
@@ -64,7 +62,6 @@ class FriendGroupViewTest(AuthTestCase):
 
         body = response.json()
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(body['owner'], {'username': 'me'})
         self.assertEqual(body['name'], 'Some New Group')
 
     def test_can_delete_group(self):

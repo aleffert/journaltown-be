@@ -6,28 +6,43 @@ from rest_framework import serializers
 from posts.models import FriendGroup, Post, UserProfile, Follow
 
 
+class RelatedUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['username']
+
+
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ['bio']
 
 
+class FriendGroupSerializer(serializers.ModelSerializer):
+
+    name = serializers.CharField(required=True)
+
+    class Meta:
+        model = FriendGroup
+        fields = ['id', 'name']
+
+        expandable_fields = {
+            'members': (RelatedUserSerializer, (), {'many': True}),
+            'owner': (RelatedUserSerializer, (), {'read_only': True})
+        }
+
+
 class CurrentUserSerializer(serializers.ModelSerializer):
 
     profile = UserProfileSerializer(read_only=True)
+    groups = FriendGroupSerializer(source="friendgroup_set", read_only=True, many=True)
 
     class Meta:
         email = serializers.EmailField()
 
         model = User
-        fields = ['id', 'username', 'email', 'profile']
-
-
-class RelatedUserSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        fields = ['username']
+        fields = ['id', 'username', 'email', 'profile', 'groups']
 
 
 class FollowerUserSerializer(serializers.ModelSerializer):
@@ -69,17 +84,3 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ['id', 'author', 'created_at', 'title', 'body', 'last_modified']
-
-
-class FriendGroupSerializer(serializers.ModelSerializer):
-
-    owner = RelatedUserSerializer(read_only=True)
-    name = serializers.CharField(required=True)
-
-    class Meta:
-        model = FriendGroup
-        fields = ['id', 'owner', 'name']
-
-        expandable_fields = {
-            'members': (RelatedUserSerializer, (), {'many: True'})
-        }
