@@ -70,30 +70,25 @@ class FriendGroupMemberView(generics.GenericAPIView, UsernameScopedMixin):
         user = self.get_user_or_404(username)
         group = get_object_or_404(models.FriendGroup, owner=user, id=group_id)
 
-        member_username = request.data.get('username', None)
-        member = self.get_user_or_404(member_username, check=False)
-
         if group.owner != user:
             return Response(errors.InvalidFieldsError(['id']).render(), 404)
 
-        record = models.FriendGroupMember.objects.filter(group=group, member=member)
-        if not record:
-            models.FriendGroupMember.objects.create(group=group, member=member)
+        member_usernames = request.data.get('usernames', [])
+        members = [
+            self.get_user_or_404(member_username, check=False)
+            for member_username in member_usernames
+        ]
 
-        return Response(serializers.RelatedUserSerializer(member).data, 200)
+        existing_members = models.FriendGroupMember.objects.filter(group=group)
+        for existing_member in existing_members:
+            if existing_member.member.username not in member_usernames:
+                existing_member.delete()
 
-    def delete(self, request: Request, username: str, group_id: int, *args, **kwargs):
-        user = self.get_user_or_404(username)
-        group = get_object_or_404(models.FriendGroup, owner=user, id=group_id)
+        for member in members:
+            record = models.FriendGroupMember.objects.filter(group=group, member=member)
+            if not record:
+                models.FriendGroupMember.objects.create(group=group, member=member)
 
-        member_username = request.data.get('username', None)
-        member = self.get_user_or_404(member_username, check=False)
-
-        if group.owner != user:
-            return Response(errors.InvalidFieldsError(['id']).render(), 404)
-
-        record = models.FriendGroupMember.objects.filter(group=group, member=member)
-        if record:
-            record.delete()
-
-        return Response('', 204)
+        return Response([
+            serializers.RelatedUserSerializer(member).data for member in members
+            ], 200)

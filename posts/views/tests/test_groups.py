@@ -160,14 +160,14 @@ class FriendGroupMemberViewTest(AuthTestCase):
 
         response = self.client.put(
             f'/users/{self.user.username}/groups/{self.group.pk}/members/',
-            data=json.dumps({'username': self.other.username}),
+            data=json.dumps({'usernames': [self.other.username]}),
             content_type='application/json'
         )
 
         body = response.json()
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(body, {'username': self.other.username})
+        self.assertEqual(body, [{'username': self.other.username}])
 
     def test_can_add_group_members_idempotent(self):
         """Adding group members is idempotent"""
@@ -175,19 +175,19 @@ class FriendGroupMemberViewTest(AuthTestCase):
 
         response = self.client.put(
             f'/users/{self.user.username}/groups/{self.group.pk}/members/',
-            data=json.dumps({'username': self.other.username}),
+            data=json.dumps({'usernames': [self.other.username]}),
             content_type='application/json'
         )
         response = self.client.put(
             f'/users/{self.user.username}/groups/{self.group.pk}/members/',
-            data=json.dumps({'username': self.other.username}),
+            data=json.dumps({'usernames': [self.other.username]}),
             content_type='application/json'
         )
 
         body = response.json()
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(body, {'username': self.other.username})
+        self.assertEqual(body, [{'username': self.other.username}])
         self.assertEqual(1, FriendGroupMember.objects.count())
 
     def test_cannot_add_members_to_external_group(self):
@@ -220,13 +220,13 @@ class FriendGroupMemberViewTest(AuthTestCase):
 
         FriendGroupMember.objects.create(member=self.other, group=self.group)
 
-        response = self.client.delete(
+        response = self.client.put(
             f'/users/{self.user.username}/groups/{self.group.pk}/members/',
-            data=json.dumps({'username': self.other.username}),
+            data=json.dumps({'usernames': []}),
             content_type='application/json'
         )
 
-        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.status_code, 200)
         self.assertIsNone(FriendGroupMember.objects.filter(member=self.other, group=self.group).first())
 
     def test_can_delete_members_idempotent(self):
@@ -235,19 +235,19 @@ class FriendGroupMemberViewTest(AuthTestCase):
 
         FriendGroupMember.objects.create(member=self.other, group=self.group)
 
-        response = self.client.delete(
+        response = self.client.put(
             f'/users/{self.user.username}/groups/{self.group.pk}/members/',
-            data=json.dumps({'username': self.other.username}),
+            data=json.dumps({'usernames': []}),
             content_type='application/json'
         )
 
-        response = self.client.delete(
+        response = self.client.put(
             f'/users/{self.user.username}/groups/{self.group.pk}/members/',
-            data=json.dumps({'username': self.other.username}),
+            data=json.dumps({'usernames': []}),
             content_type='application/json'
         )
 
-        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.status_code, 200)
         self.assertIsNone(FriendGroupMember.objects.filter(member=self.other, group=self.group).first())
 
     def test_cannot_delete_members_from_external_group(self):
@@ -256,9 +256,9 @@ class FriendGroupMemberViewTest(AuthTestCase):
 
         FriendGroupMember.objects.create(member=self.user, group=self.other_group)
 
-        response = self.client.delete(
+        response = self.client.put(
             f'/users/{self.other.username}/groups/{self.group.pk}/members/',
-            data=json.dumps({'username': self.user.username}),
+            data=json.dumps({'usernames': [self.user.username]}),
             content_type='application/json'
         )
 
@@ -268,9 +268,9 @@ class FriendGroupMemberViewTest(AuthTestCase):
         """Cannot delete members from a group owned by another user through our namespace"""
         self.client.force_login(self.user)
 
-        response = self.client.delete(
+        response = self.client.put(
             f'/users/{self.user.username}/groups/{self.other_group.pk}/members/',
-            data=json.dumps({'username': self.user.username}),
+            data=json.dumps({'usernames': [self.user.username]}),
             content_type='application/json'
         )
 
