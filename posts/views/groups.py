@@ -25,14 +25,34 @@ class FriendGroupView(generics.GenericAPIView, UsernameScopedMixin):
     def post(self, request: Request, username: str, *args, **kwargs):
         user = self.get_user_or_404(username)
 
-        group = serializers.FriendGroupSerializer(data=request.data)
-        group.is_valid()
-
-        current_group = models.FriendGroup.objects.filter(owner=user, name=group.validated_data['name'])
+        name = request.data.get('name', None)
+        if not name:
+            raise errors.ResponseException(errors.MissingFieldsError(['name']), 403)
+        current_group = models.FriendGroup.objects.filter(owner=user, name=name).first()
         if current_group:
-            group.save(current_group, owner=request.user)
+            raise errors.ResponseException(errors.NameInUseError(['name']), 403)
+
+        group = serializers.FriendGroupSerializer(data=request.data)
+        group.is_valid(raise_exception=True)
+
+        group.save(owner=request.user)
+
+        return Response(group.data)
+
+    def put(self, request: Request, username: str, *args, **kwargs):
+        user = self.get_user_or_404(username)
+
+        name = request.data.get('name', None)
+        if not name:
+            raise errors.MissingFieldsError(['name'])
+        current_group = models.FriendGroup.objects.filter(owner=user, name=name).first()
+        if current_group:
+            group = serializers.FriendGroupSerializer(current_group, data=request.data)
         else:
-            group.save(owner=request.user)
+            group = serializers.FriendGroupSerializer(data=request.data)
+        group.is_valid(raise_exception=True)
+
+        group.save(owner=request.user)
 
         return Response(group.data)
 

@@ -64,6 +64,19 @@ class FriendGroupViewTest(AuthTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(body['name'], 'Some New Group')
 
+    def test_cannot_create_multiple_groups_with_same_name(self):
+        """We cannot create multiple groups with the same name"""
+        self.client.force_login(self.user)
+        FriendGroup.objects.create(owner=self.user, name="Name")
+
+        response = self.client.post(
+            f'/users/{self.user.username}/groups/',
+            data=json.dumps({'name': 'Name'}),
+            content_type="application/json"
+        )
+
+        self.assertEqual(response.status_code, 403)
+
     def test_can_delete_group(self):
         """We can delete a group we own"""
         self.client.force_login(self.user)

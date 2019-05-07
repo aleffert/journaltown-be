@@ -3,13 +3,7 @@ from typing import List
 from rest_framework.response import Response
 
 
-class OfResponse(Exception):
-
-    def __init__(self, response: Response):
-        self.response = response
-
-
-class ResponseError:
+class ResponseError(Exception):
 
     def __init__(self, code, errors):
         self.code = code
@@ -41,6 +35,16 @@ class InvalidFieldsError(ResponseError):
         ])
 
 
+class NameInUseError(ResponseError):
+    def __init__(self, fields: List[str]):
+        super().__init__('name-in-use', [
+            {
+                'message': f"There is already a record with that value for '{field}'",
+                'name': field
+            } for field in fields
+        ])
+
+
 class EmailInUseError(ResponseError):
 
     def __init__(self):
@@ -51,3 +55,9 @@ class InvalidUsernameError(ResponseError):
 
     def __init__(self, name: str):
         super().__init__('unknown-username', [f"There is no user named '{name}'"])
+
+
+class ResponseException(Exception):
+
+    def __init__(self, error: ResponseError, status_code: int):
+        self.response = Response(error.render(), status_code)

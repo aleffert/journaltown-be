@@ -16,7 +16,7 @@ class ResponseExceptionMiddleware:
         return response
 
     def process_exception(self, request, exception):
-        if isinstance(exception, errors.OfResponse):
+        if isinstance(exception, errors.ResponseException):
             return JsonResponse(exception.response.data, status=exception.response.status_code)
 
 
