@@ -121,7 +121,7 @@ class FollowViewTestCase(AuthTestCase):
     def test_get_returns_follow_list(self):
         """All follows are returned"""
         self.client.force_login(self.user)
-        Follow.objects.create(follower=self.other, followee=self.user)
+        Follow.objects.create(follower=self.user, followee=self.other)
 
         response = self.client.get(f'/users/{self.user.username}/follows/')
         self.assertEqual(200, response.status_code)
@@ -134,8 +134,8 @@ class FollowViewTestCase(AuthTestCase):
         self.client.force_login(self.user)
         third_user = get_user_model().objects.create_user(username='hii', email='hii@example.com')
 
-        Follow.objects.create(follower=self.other, followee=self.user)
-        Follow.objects.create(follower=third_user, followee=self.user)
+        Follow.objects.create(follower=self.user, followee=self.other)
+        Follow.objects.create(follower=self.user, followee=third_user)
 
         response = self.client.get(f'/users/{self.user.username}/follows/?username={self.other.username}')
         self.assertEqual(200, response.status_code)
@@ -148,8 +148,8 @@ class FollowViewTestCase(AuthTestCase):
         self.client.force_login(self.user)
         third_user = get_user_model().objects.create_user(username='hii', email='hii@example.com')
 
-        Follow.objects.create(follower=self.other, followee=self.user)
-        Follow.objects.create(follower=third_user, followee=self.user)
+        Follow.objects.create(follower=self.user, followee=self.other)
+        Follow.objects.create(follower=self.user, followee=third_user)
 
         response = self.client.get(
             f'/users/{self.user.username}/follows/?username__in={self.other.username},{third_user.username}'
@@ -161,7 +161,6 @@ class FollowViewTestCase(AuthTestCase):
     def test_get_invalid_username_fails(self):
         """Getting an invalid username fails"""
         self.client.force_login(self.user)
-        Follow.objects.create(follower=self.other, followee=self.user)
 
         response = self.client.get(f'/users/whatever/follows/')
         self.assertEqual(404, response.status_code)

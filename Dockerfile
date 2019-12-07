@@ -18,7 +18,7 @@ RUN apk add --no-cache \
     postgresql-client \
     jpeg-dev \
     zlib-dev && \
-  pip install pipenv && \
+  pip install coverage pipenv && \
   pipenv install --deploy --system
 
 COPY . .

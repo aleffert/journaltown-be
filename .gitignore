@@ -3,3 +3,5 @@
 dist
 secrets-*.tfvars
 .env
+.coverage
+htmlcov

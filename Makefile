@@ -57,3 +57,6 @@ test:
 
 typecheck:
 	mypy .
+
+coverage:
+	coverage run manage.py test && coverage html && coverage report

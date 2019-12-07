@@ -7,8 +7,8 @@ class CharInFilter(django_filters.rest_framework.BaseInFilter, django_filters.re
 
 
 class FollowersFilterSet(django_filters.rest_framework.FilterSet):
-    username = django_filters.CharFilter(field_name='follower__username', lookup_expr='exact')
-    username__in = CharInFilter(field_name='follower__username', lookup_expr='in')
+    username = django_filters.CharFilter(field_name='followee__username', lookup_expr='exact')
+    username__in = CharInFilter(field_name='followee__username', lookup_expr='in')
 
 
 class PostFilterSet(django_filters.rest_framework.FilterSet):

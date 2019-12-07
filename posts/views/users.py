@@ -47,8 +47,8 @@ class FollowView(generics.GenericAPIView, UsernameScopedMixin):
     def get(self, request: Request, username: str, *args, **kwargs):
         user = self.get_user_or_404(username)
 
-        followers = filters.FollowersFilterSet(request.GET, queryset=user.followers).qs
-        return Response([serializers.UserSerializer(follow.follower).data for follow in followers])
+        following = filters.FollowersFilterSet(request.GET, queryset=user.following).qs
+        return Response([serializers.UserSerializer(follow.followee).data for follow in following])
 
     def put(self, request: Request, username: str, *args, **kwargs):
         source_user = self.get_user_or_404(username)

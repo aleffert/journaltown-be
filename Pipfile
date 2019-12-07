@@ -23,6 +23,7 @@ validate-email = "*"
 django-registration = "*"
 djangorestframework-expander = "*"
 drf-writable-nested = "*"
+coverage = "*"
 
 [requires]
 python_version = "3.7"

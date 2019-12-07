@@ -35,6 +35,7 @@ urlpatterns = [
     path('callback/register/', registration.register_email_callback),
     path('users/<username>/available/', registration.is_available),
     path('users/<username>/follows/', users.FollowView.as_view()),
-    path('users/<username>/groups/', groups.FriendGroupView.as_view()),
+    path('users/<username>/groups/', groups.FriendGroupsView.as_view()),
+    path('users/<username>/groups/<int:group_id>/', groups.FriendGroupView.as_view()),
     path('users/<username>/groups/<int:group_id>/members/', groups.FriendGroupMemberView.as_view())
 ]
