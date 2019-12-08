@@ -48,7 +48,7 @@ class FriendGroupsViewTest(AuthTestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(body['name'], 'Some Group')
 
-    def test_can_create_own_group(self):
+    def test_create_group_needs_name(self):
         """Creating a group requires a name"""
         self.client.force_login(self.user)
 
@@ -58,7 +58,6 @@ class FriendGroupsViewTest(AuthTestCase):
             content_type="application/json"
         )
 
-        body = response.json()
         self.assertEqual(response.status_code, 403)
 
     def test_can_create_group_with_members(self):
@@ -77,32 +76,6 @@ class FriendGroupsViewTest(AuthTestCase):
         body = response.json()
         self.assertEqual(response.status_code, 201)
         self.assertEqual(body['members'], [{'username': self.other.username}])
-
-    def test_updating_group_will_not_overwrite_members(self):
-        """Updating a group won't overwrite members if we don't pass a members field"""
-        self.client.force_login(self.user)
-
-        response = self.client.post(
-            f'/users/{self.user.username}/groups/',
-            data=json.dumps({
-                'name': 'Some Group',
-                'members': [self.other.username]
-            }),
-            content_type="application/json"
-        )
-
-        group_id = response.json()['id']
-        response = self.client.put(
-            f'/users/{self.user.username}/groups/{group_id}/',
-            data=json.dumps({
-                'name': 'Some Group',
-            }),
-            content_type="application/json"
-        )
-
-        body = response.json()
-        self.assertEqual(response.status_code, 200)
-        self.assertNotIn('members', body)
 
     def test_cannot_create_multiple_groups_with_same_name(self):
         """We cannot create multiple groups with the same name"""
@@ -204,6 +177,33 @@ class FriendGroupViewTest(AuthTestCase):
 
         self.assertEqual(response.status_code, 404)
 
+    def test_updating_group_can_remove_members(self):
+        """Updating a group can remove members"""
+        self.client.force_login(self.user)
+
+        response = self.client.post(
+            f'/users/{self.user.username}/groups/',
+            data=json.dumps({
+                'name': 'Some Group',
+                'members': [self.other.username]
+            }),
+            content_type="application/json"
+        )
+        group_id = response.json()['id']
+
+        response = self.client.put(
+            f'/users/{self.user.username}/groups/{group_id}/',
+            data=json.dumps({
+                'name': 'Some Group',
+                'members': []
+            }),
+            content_type="application/json"
+        )
+
+        body = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(body['members'], [])
+
     def test_updating_group_can_update_members(self):
         """Updating a group can change its members"""
         self.client.force_login(self.user)
@@ -232,6 +232,32 @@ class FriendGroupViewTest(AuthTestCase):
         body = response.json()
         self.assertEqual(response.status_code, 200)
         self.assertEqual(body['members'], [{'username': third.username}])
+
+    def test_updating_group_will_not_overwrite_members(self):
+        """Updating a group won't overwrite members if we don't pass a members field"""
+        self.client.force_login(self.user)
+
+        response = self.client.post(
+            f'/users/{self.user.username}/groups/',
+            data=json.dumps({
+                'name': 'Some Group',
+                'members': [self.other.username]
+            }),
+            content_type="application/json"
+        )
+
+        group_id = response.json()['id']
+        response = self.client.put(
+            f'/users/{self.user.username}/groups/{group_id}/',
+            data=json.dumps({
+                'name': 'Some Group',
+            }),
+            content_type="application/json"
+        )
+
+        body = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn('members', body)
 
 
 class FriendGroupMemberViewTest(AuthTestCase):

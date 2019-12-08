@@ -64,7 +64,7 @@ class FriendGroupsView(generics.GenericAPIView, UsernameScopedMixin):
         group_record = group.save(owner=request.user)
 
         member_usernames = request.data.get('members', None)
-        if member_usernames:
+        if member_usernames is not None:
             member_records = _update_members(
                 lambda u: self.get_user_or_404(u, check=False),
                 group_record, member_usernames
@@ -100,7 +100,7 @@ class FriendGroupView(generics.GenericAPIView, UsernameScopedMixin):
         group_record = group.save(owner=request.user)
 
         member_usernames = request.data.get('members', None)
-        if member_usernames:
+        if member_usernames is not None:
             member_records = _update_members(
                 lambda u: self.get_user_or_404(u, check=False), group_record, member_usernames
             )
