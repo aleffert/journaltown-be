@@ -146,3 +146,22 @@ class FriendGroupMember(models.Model):
     created_at = models.DateTimeField(
         auto_now_add=True
     )
+
+
+class PostPermission(models.Model):
+
+    user = models.ForeignKey(
+        User, null=False, db_index=True, on_delete=models.CASCADE
+    )
+
+    post = models.ForeignKey(
+        Post, null=False, db_index=True, on_delete=models.CASCADE
+    )
+
+    last_modified = models.DateTimeField(
+        auto_now=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
