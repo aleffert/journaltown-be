@@ -53,6 +53,24 @@ class Post(models.Model):
 
     body = models.CharField(max_length=1024 * 1024, blank=True, null=False)
 
+    visibility_type = models.CharField(
+        max_length=20,
+        choices=[
+            ('public', 'Public'),
+            ('private', 'Private'),
+            ('all_friends', 'All Friends'),
+            ('friend_group', 'Friend Group')],
+        null=False,
+        blank=False
+    )
+
+    access_group = models.ForeignKey(
+        'FriendGroup',
+        null=True,
+        db_index=True,
+        on_delete=models.SET_NULL
+    )
+
     def __str__(self):
         return f"Post by {self.author.username}: '{self.title[0:20]}'"
 
